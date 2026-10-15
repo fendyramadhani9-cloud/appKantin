@@ -50,6 +50,26 @@ Infrastruktur dideploy di atas AWS Academy menggunakan Terraform:
 
 ---
 
+> 📷 **[SLOT SCREENSHOT 1: Konsol AWS EC2 (4 Instance & IAM Role)]**  
+> *Deskripsi: Tangkapan layar tabel konsol AWS EC2 yang menampilkan 4 instance berjalan (manager, worker1, worker2, db) lengkap dengan kolom Name, State, Public IP, dan IAM Role LabInstanceProfile.*  
+>  
+> *(Tempelkan gambar Screenshot 1 di bawah ini)*  
+> ```text
+> [ TEMPAT GAMBAR SCREENSHOT 1: AWS EC2 INSTANCES ]
+> ```
+
+---
+
+> 📷 **[SLOT SCREENSHOT 2: AWS Security Group (Inbound Rules `sg-swarm`)]**  
+> *Deskripsi: Tangkapan layar tabel Inbound Rules Security Group `sg-swarm` yang memperlihatkan port 22 (SSH), 2377, 7946, 4789, 8080, dan 3306.*  
+>  
+> *(Tempelkan gambar Screenshot 2 di bawah ini)*  
+> ```text
+> [ TEMPAT GAMBAR SCREENSHOT 2: AWS SECURITY GROUP RULES ]
+> ```
+
+---
+
 ### D. LANGKAH-LANGKAH PRAKTIKUM & PENJELASAN PERINTAH
 
 #### Tahap 1: Persiapan Repository & Kredensial CI/CD
@@ -74,6 +94,16 @@ Infrastruktur dideploy di atas AWS Academy menggunakan Terraform:
 
 ---
 
+> 📷 **[SLOT SCREENSHOT 3: Konfigurasi GitHub Repository Secrets]**  
+> *Deskripsi: Tangkapan layar halaman GitHub Settings -> Secrets and variables -> Actions yang memperlihatkan 4 secret telah terdaftar (DOCKERHUB_USERNAME, DOCKERHUB_TOKEN, SSH_HOST, SSH_PRIVATE_KEY).*  
+>  
+> *(Tempelkan gambar Screenshot 3 di bawah ini)*  
+> ```text
+> [ TEMPAT GAMBAR SCREENSHOT 3: GITHUB ACTIONS SECRETS ]
+> ```
+
+---
+
 #### Tahap 2: Pengemasan Aplikasi (Dockerfile & .dockerignore)
 Di root direktori repository dibuat dua berkas:
 
@@ -94,6 +124,16 @@ Di root direktori repository dibuat dua berkas:
 
 ---
 
+> 📷 **[SLOT SCREENSHOT 4: File Dockerfile & .dockerignore]**  
+> *Deskripsi: Tangkapan layar isi file Dockerfile dan .dockerignore di repository GitHub atau editor kode.*  
+>  
+> *(Tempelkan gambar Screenshot 4 di bawah ini)*  
+> ```text
+> [ TEMPAT GAMBAR SCREENSHOT 4: DOCKERFILE & DOCKERIGNORE ]
+> ```
+
+---
+
 #### Tahap 3: Pemisahan Konfigurasi Rahasia (Docker Config)
 Dijalankan di terminal node manager:
 ```bash
@@ -108,6 +148,16 @@ docker service create --name kantin \
   fendyramadhani/appkantin:latest
 ```
 * *Penjelasan:* Membuat service Swarm bernama `kantin` dengan 3 replika container, mempublikasikan port 8080, dan menyuntikkan Docker config `kantin_db_php` langsung ke path `/var/www/html/config/db.php` di dalam container saat runtime.
+
+---
+
+> 📷 **[SLOT SCREENSHOT 5: Terminal Manager - Docker Config & Service Awal]**  
+> *Deskripsi: Tangkapan layar terminal manager saat menjalankan `docker config ls` dan `docker service ls` yang memperlihatkan service kantin berjalan 3/3 replika dari image fendyramadhani/appkantin:latest.*  
+>  
+> *(Tempelkan gambar Screenshot 5 di bawah ini)*  
+> ```text
+> [ TEMPAT GAMBAR SCREENSHOT 5: DOCKER CONFIG & SERVICE LS ]
+> ```
 
 ---
 
@@ -178,6 +228,26 @@ jobs:
 
 ---
 
+> 📷 **[SLOT SCREENSHOT 6: Tab GitHub Actions (Job Build & Deploy Sukses/Hijau)]**  
+> *Deskripsi: Tangkapan layar halaman GitHub Actions yang memperlihatkan pipeline run berhasil (centang hijau) pada job build maupun job deploy.*  
+>  
+> *(Tempelkan gambar Screenshot 6 di bawah ini)*  
+> ```text
+> [ TEMPAT GAMBAR SCREENSHOT 6: GITHUB ACTIONS JOB HIJAU ]
+> ```
+
+---
+
+> 📷 **[SLOT SCREENSHOT 7: Docker Hub Repository Tags (`latest` & `commit sha`)]**  
+> *Deskripsi: Tangkapan layar halaman Docker Hub (fendyramadhani/appkantin -> tab Tags) yang menampilkan image dengan tag 'latest' dan tag sha commit unik.*  
+>  
+> *(Tempelkan gambar Screenshot 7 di bawah ini)*  
+> ```text
+> [ TEMPAT GAMBAR SCREENSHOT 7: DOCKER HUB TAGS ]
+> ```
+
+---
+
 #### Tahap 5: Rilis Fitur Baru & Uji Rolling Update (Tugas 1)
 1. Menambahkan baris penampil hostname di [footer.php](file:///d:/Projects/DevOps/Scripts/am/appKantin-fork/footer.php):
    ```php
@@ -192,6 +262,26 @@ jobs:
 
 ---
 
+> 📷 **[SLOT SCREENSHOT 8: Terminal Manager - Rolling Update `docker service ps kantin`)]**  
+> *Deskripsi: Tangkapan layar terminal manager yang memperlihatkan status replika lama Shutdown dan replika baru Running dengan tag image commit sha.*  
+>  
+> *(Tempelkan gambar Screenshot 8 di bawah ini)*  
+> ```text
+> [ TEMPAT GAMBAR SCREENSHOT 8: ROLLING UPDATE PS KANTIN ]
+> ```
+
+---
+
+> 📷 **[SLOT SCREENSHOT 9: Browser - Aplikasi Live & Rotasi Hostname di Footer]**  
+> *Deskripsi: Tangkapan layar web browser saat membuka http://44.200.202.109:8080 yang memperlihatkan halaman web Aplikasi Kantin dan tulisan 'Dilayani oleh: <hostname>' pada footer yang berganti saat di-refresh (bukti routing mesh).*  
+>  
+> *(Tempelkan gambar Screenshot 9 di bawah ini)*  
+> ```text
+> [ TEMPAT GAMBAR SCREENSHOT 9: APLIKASI WEB & HOSTNAME FOOTER ]
+> ```
+
+---
+
 #### Tahap 6: Pengujian Fitur Rollback (Langkah 7 & Tugas 2)
 Jika versi baru memiliki masalah setelah dideploy, kita dapat mengembalikan versi aplikasi secara instan ke versi sebelumnya:
 ```bash
@@ -202,6 +292,26 @@ docker service rollback kantin
 docker service inspect kantin --format '{{.Spec.TaskTemplate.ContainerSpec.Image}}'
 ```
 * *Penjelasan:* Menampilkan tag image aktif untuk memastikan container sudah kembali ke versi stabil sebelumnya.
+
+---
+
+> 📷 **[SLOT SCREENSHOT 10: Terminal Manager - Eksekusi `docker service rollback kantin`)]**  
+> *Deskripsi: Tangkapan layar terminal manager saat menjalankan perintah rollback dan inspect image yang membuktikan service berhasil kembali ke image sebelumnya.*  
+>  
+> *(Tempelkan gambar Screenshot 10 di bawah ini)*  
+> ```text
+> [ TEMPAT GAMBAR SCREENSHOT 10: ROLLBACK SWARM ]
+> ```
+
+---
+
+> 📷 **[SLOT SCREENSHOT 11: Terminal DB - Verifikasi Database MariaDB]**  
+> *Deskripsi: Tangkapan layar terminal instance db saat menjalankan query `SHOW TABLES;` dan `SELECT COUNT(*) FROM menu;` yang memperlihatkan tabel-tabel kantin_db dan data 13 menu aman tersimpan.*  
+>  
+> *(Tempelkan gambar Screenshot 11 di bawah ini)*  
+> ```text
+> [ TEMPAT GAMBAR SCREENSHOT 11: QUERY MARIADB ]
+> ```
 
 ---
 
