@@ -35,3 +35,19 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/appkantin:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/appkantin:${{ github.sha }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Docker Swarm via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker service update \
+              --image ${{ secrets.DOCKERHUB_USERNAME }}/appkantin:${{ github.sha }} \
+              --update-parallelism 1 --update-delay 10s \
+              kantin
